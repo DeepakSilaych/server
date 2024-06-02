@@ -13,4 +13,13 @@ class CSFormData(models.Model):
         return self.name
 
 # tweet data model
-# ....
+
+class Tweet(models.Model):
+    tweet_text = models.CharField(max_length=200)
+    timestamp = models.DateTimeField()
+    sentiment = models.BooleanField()
+    latitude = models.FloatField()
+    longitude = models.FloatField()
+    address = models.CharField()
+    
+    

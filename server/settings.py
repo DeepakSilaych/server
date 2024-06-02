@@ -1,9 +1,12 @@
 
 from pathlib import Path
 from .celery import CELERY_BEAT_SCHEDULE
+from datetime import timedelta
+import os
+from celery.schedules import crontab
 
 
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  
 
 SECRET_KEY = 'django-insecure-%b#i7-j1&gkl5p&&ggj=rcn4w+#_y69t+4er7eesx92*$^j@0e'
 
@@ -18,11 +21,15 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    
     'weatherstations',
     'awsstations',
     'crowdsource',
     'blogs',
+    
     'rest_framework',
+    'django_celery_beat',
+
 ]
 
 MIDDLEWARE = [
@@ -61,9 +68,9 @@ DATABASES = {
 
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'climateiitb',
-        'USER': 'deepaksilaych',
-        'PASSWORD': '1oct2004',
+        'NAME': 'hdfcergo',
+        'USER': 'climate',
+        'PASSWORD': 'HDFCERGOweb2023',
         'HOST': 'localhost',     
         'PORT': '5432',
     }
@@ -88,7 +95,8 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Kolkata'
+
 
 USE_I18N = True
 
@@ -99,9 +107,16 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+################################################################################ !!!!!!!!!!!!!!!!!!! Celery
 CELERY_BROKER_URL = 'redis://localhost:6379/0'
-CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
-CELERY_ACCEPT_CONTENT = ['json']
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_RESULT_SERIALIZER = 'json'
-CELERY_TIMEZONE = 'IST'
+
+CELERY_BEAT_SCHEDULE = {
+    'every-15-minutes': {
+        'task': 'awsstations.tasks.scheduled_15_min',
+        'schedule': crontab(minute='0,15,30,45'),
+    },
+    'everyday-3:35': {
+        'task': 'awsstations.tasks.scheduled_daily',
+        'schedule': crontab(hour=16, minute=14),
+    }
+}

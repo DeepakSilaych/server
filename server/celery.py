@@ -19,9 +19,4 @@ def debug_task(self):
 
 # myproject/celerybeat_schedule.py
 
-CELERY_BEAT_SCHEDULE = {
-    'run-my-periodic-task': {
-        'task': 'myapp.tasks.my_periodic_task',
-        'schedule': crontab(minute='*/5'), 
-    },
-}
+CELERY_BEAT_SCHEDULE = {}
